@@ -3,16 +3,16 @@ package com.trex.entities;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-/*****************************************************************************
- *                                                                           *
- * CLASS: Background                                                         *
- * DESCRIPTION: Manages scrolling background layers like sky and ground.     *
- *                                                                           *
- * OOP CONCEPTS APPLIED:                                                     *
- * - Inheritance: Extends from GameObject.                                   *
- * - Overriding: Overrides update() and draw() for infinite scrolling.       *
- *                                                                           *
- ****************************************************************************/
+/***********************************************************************************************
+ *                                                                                             *
+ *  CLASS: Background                                                                          *
+ *  DESCRIPTION: จัดการการเลื่อนไปข้างหน้าของเลเยอร์ฉากหลัง เช่น ท้องฟ้าและพื้นดิน                          *
+ *                                                                                             *
+ *  OOP CONCEPTS APPLIED:                                                                      *
+ *  - Inheritance: สืบทอดคุณสมบัติระดับคลาสมาจาก GameObject แม่                                      *
+ *  - Overriding: เขียนทับเมธอด update() และ draw() เพื่อทำภาพเลื่อนแบบไร้ขอบเขต                      *
+ *                                                                                             *
+ **********************************************************************************************/
 public class Background extends GameObject {
     private double scrollSpeed;
     private int screenWidth;

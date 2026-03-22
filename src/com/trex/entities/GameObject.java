@@ -4,17 +4,17 @@ import com.trex.core.Renderable;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-/*****************************************************************************
- *                                                                           *
- * CLASS: GameObject                                                         *
- * DESCRIPTION: The base abstract class for all physical entities in the game. *
- *                                                                           *
- * OOP CONCEPTS APPLIED:                                                     *
- * - Abstract Class: Defines an abstract blueprint for entities.             *
- * - Interface: Implements Renderable for drawing mechanics.                 *
- * - Encapsulation: Uses protected modifiers for position variables.         *
- *                                                                           *
- ****************************************************************************/
+/***********************************************************************************************
+ *                                                                                             *
+ *  CLASS: GameObject                                                                          *
+ *  DESCRIPTION: คลาสนามธรรมที่เป็นโครงสร้างหลักเบื้องต้นสุดของออบเจกต์ต่างๆ ภายในเกม                     *
+ *                                                                                             *
+ *  OOP CONCEPTS APPLIED:                                                                      *
+ *  - Abstract Class: กำหนดพิมพ์เขียวเบื้องต้นนามธรรมให้รูปภาพและพิกัดแกน                                *
+ *  - Interface: ประกอบร่างกับ Renderable ทำสัญญารองรับฟีเจอร์การวาด                                 *
+ *  - Encapsulation: เปิดใช้ตัวแปรแบบ protected ไว้จัดการข้อมูล                                       *
+ *                                                                                             *
+ **********************************************************************************************/
 public abstract class GameObject implements Renderable {
     protected double x;
     protected double y;

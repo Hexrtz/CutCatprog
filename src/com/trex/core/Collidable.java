@@ -2,15 +2,15 @@ package com.trex.core;
 
 import java.awt.Rectangle;
 
-/*****************************************************************************
- *                                                                           *
- * CLASS: Collidable                                                         *
- * DESCRIPTION: Interface defining collision boundaries for game entities.   *
- *                                                                           *
- * OOP CONCEPTS APPLIED:                                                     *
- * - Interface Class: Defines getBounds() and default interaction methods.   *
- *                                                                           *
- ****************************************************************************/
+/***********************************************************************************************
+ *                                                                                             *
+ *  CLASS: Collidable                                                                          *
+ *  DESCRIPTION: อินเตอร์เฟซที่กำหนดขอบเขตและเงื่อนไขการชนกันของออบเจกต์ในเกม                          *
+ *                                                                                             *
+ *  OOP CONCEPTS APPLIED:                                                                      *
+ *  - Interface Class: ทิ้งเมธอด getBounds() ให้คลาสอื่น และมี default isColliding()                 *
+ *                                                                                             *
+ **********************************************************************************************/
 public interface Collidable {
     Rectangle getBounds();
     default boolean isColliding(Collidable other) {
