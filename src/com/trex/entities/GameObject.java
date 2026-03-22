@@ -4,6 +4,17 @@ import com.trex.core.Renderable;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+/*****************************************************************************
+ *                                                                           *
+ * CLASS: GameObject                                                         *
+ * DESCRIPTION: The base abstract class for all physical entities in the game. *
+ *                                                                           *
+ * OOP CONCEPTS APPLIED:                                                     *
+ * - Abstract Class: Defines an abstract blueprint for entities.             *
+ * - Interface: Implements Renderable for drawing mechanics.                 *
+ * - Encapsulation: Uses protected modifiers for position variables.         *
+ *                                                                           *
+ ****************************************************************************/
 public abstract class GameObject implements Renderable {
     protected double x;
     protected double y;

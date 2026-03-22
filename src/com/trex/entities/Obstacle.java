@@ -4,6 +4,17 @@ import com.trex.core.Collidable;
 import java.awt.Image;
 import java.awt.Rectangle;
 
+/*****************************************************************************
+ *                                                                           *
+ * CLASS: Obstacle                                                           *
+ * DESCRIPTION: Abstract base class for all enemies and hazards.             *
+ *                                                                           *
+ * OOP CONCEPTS APPLIED:                                                     *
+ * - Abstract Class: Generalizes obstacle behavior.                          *
+ * - Inheritance: Extends from GameObject.                                   *
+ * - Interface: Implements Collidable.                                       *
+ *                                                                           *
+ ****************************************************************************/
 public abstract class Obstacle extends GameObject implements Collidable {
     protected double speed;
 
@@ -18,11 +29,11 @@ public abstract class Obstacle extends GameObject implements Collidable {
 
     @Override
     public Rectangle getBounds() {
-        // Shurnk hitbox drastically to match ONLY the physical body of the rabbit
-        int xOffset = 25; // Push right
-        int yOffset = 25; // Push down
-        int reducedWidth = 45; // Cut off sides
-        int reducedHeight = 35; // Cut off bottom and top
+        
+        int xOffset = 25; 
+        int yOffset = 25; 
+        int reducedWidth = 45; 
+        int reducedHeight = 35; 
         return new Rectangle((int)x + xOffset, (int)y + yOffset, width - reducedWidth, height - reducedHeight);
     }
 }

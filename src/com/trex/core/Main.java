@@ -3,6 +3,15 @@ package com.trex.core;
 import com.trex.ui.GameScreen;
 import javax.swing.JFrame;
 
+/*****************************************************************************
+ *                                                                           *
+ * CLASS: Main                                                               *
+ * DESCRIPTION: The entry point of the game application; sets up the main window. *
+ *                                                                           *
+ * OOP CONCEPTS APPLIED:                                                     *
+ * - Association: Creates and manages the GameScreen instance.               *
+ *                                                                           *
+ ****************************************************************************/
 public class Main {
     public static void main(String[] args) {
         JFrame frame = new JFrame("T-Rex Runner OOP");

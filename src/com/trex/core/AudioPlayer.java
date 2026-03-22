@@ -4,12 +4,21 @@ import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 
+/*****************************************************************************
+ *                                                                           *
+ * CLASS: AudioPlayer                                                        *
+ * DESCRIPTION: Handles background music and sound effects playback.         *
+ *                                                                           *
+ * OOP CONCEPTS APPLIED:                                                     *
+ * - Encapsulation: Hides Clip instances using private modifiers.            *
+ *                                                                           *
+ ****************************************************************************/
 public class AudioPlayer {
     private Clip bgmClip;
     private Clip sfxClip;
 
     public AudioPlayer() {
-        // Initialize
+        
     }
 
     public void playBGM(String filePath) {
@@ -24,7 +33,7 @@ public class AudioPlayer {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             bgmClip = AudioSystem.getClip();
             bgmClip.open(audioStream);
-            bgmClip.loop(Clip.LOOP_CONTINUOUSLY); // BGM should loop
+            bgmClip.loop(Clip.LOOP_CONTINUOUSLY); 
             bgmClip.start();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
@@ -39,7 +48,7 @@ public class AudioPlayer {
 
     public void playSFX(String filePath) {
         try {
-            // Re-use or create new clip for overlapping sounds. New clip ensures rapid plays work.
+            
             File audioFile = new File(filePath);
             if (!audioFile.exists() && filePath.startsWith("src/")) {
                 audioFile = new File(filePath.substring(4));
@@ -47,14 +56,13 @@ public class AudioPlayer {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             sfxClip = AudioSystem.getClip();
             sfxClip.open(audioStream);
-            
-            // Reduce volume for jump sound specifically
+
             if (filePath.contains("jump.wav")) {
                 FloatControl gainControl = (FloatControl) sfxClip.getControl(FloatControl.Type.MASTER_GAIN);
-                gainControl.setValue(-15.0f); // Reduce volume by 15 decibels
+                gainControl.setValue(-15.0f); 
             }
             
-            sfxClip.start(); // Fire and forget
+            sfxClip.start(); 
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }

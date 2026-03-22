@@ -13,9 +13,20 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/*****************************************************************************
+ *                                                                           *
+ * CLASS: GameScreen                                                         *
+ * DESCRIPTION: Main game logic, rendering, UI, and state management.        *
+ *                                                                           *
+ * OOP CONCEPTS APPLIED:                                                     *
+ * - Inheritance: Extends JPanel for GUI rendering.                          *
+ * - Interface: Implements Runnable for the game loop thread.                *
+ * - Association: Composes Character, Obstacles, and Backgrounds.            *
+ *                                                                           *
+ ****************************************************************************/
 public class GameScreen extends JPanel implements Runnable {
-    private final int WIDTH = 900; // Increased width slightly to balance aspect ratio
-    private final int HEIGHT = 500; // Increased overall height to give more room.
+    private final int WIDTH = 900; 
+    private final int HEIGHT = 500; 
 
     private Thread gameThread;
     private boolean isRunning = false;
@@ -26,7 +37,7 @@ public class GameScreen extends JPanel implements Runnable {
     private Background base;
     private AudioPlayer audioPlayer;
 
-    private int state = 0; // 0 = Menu, 1 = Playing, 2 = Game Over
+    private int state = 0; 
     private int score = 0;
     private int frames = 0;
     private int nextSpawnFrame = 100;
@@ -48,7 +59,7 @@ public class GameScreen extends JPanel implements Runnable {
                         state = 1;
                         audioPlayer.playBGM("src/sound/gamesound.wav");
                     } else if (state == 1) {
-                        player.jump(15.5); // Jump force increased slightly for higher leaps
+                        player.jump(15.5); 
                         audioPlayer.playSFX("src/sound/jump.wav");
                     } else if (state == 2) {
                         initGame();
@@ -63,7 +74,7 @@ public class GameScreen extends JPanel implements Runnable {
     }
 
     private void loadImages() {
-        // Path unchanged, assuming imagery is kept in src/img
+        
         charImg = new ImageIcon("src/img/char.png").getImage();
         rabImg = new ImageIcon("src/img/Rab.png").getImage();
         skyImg = new ImageIcon("src/img/sky.png").getImage();
@@ -74,10 +85,9 @@ public class GameScreen extends JPanel implements Runnable {
 
     private void initMenu() {
         sky = new Background(0, 0, WIDTH, HEIGHT, skyImg, 0, WIDTH);
-        // Base image was cropped to 1536x403! Proportional height for width 900 is 236.
+        
         base = new Background(0, HEIGHT - 236, WIDTH, 236, baseImg, 0, WIDTH);
 
-        // Character lowered by 40px to sink into the visually deep ground of baseImg
         player = new Character(60, 420 - 110, 110, 110, charImg);
         obstacles = new ArrayList<>();
     }
@@ -141,11 +151,8 @@ public class GameScreen extends JPanel implements Runnable {
         base.update();
         player.update();
 
-        // Spawn Enemies
         if (frames >= nextSpawnFrame && frames > 0) {
-            // Rabbit size decreased by ~20%, down to 95x95
-            // Decrease the maximum spawn interval to make them spawn a bit more often when
-            // speed is higher
+
             int minSpawn = Math.max(40, 80 - (int) (speedBonus * 10));
             int maxSpawn = Math.max(80, 160 - (int) (speedBonus * 20));
             obstacles.add(new Rabbit(WIDTH, 420 - 95, 95, 95, rabImg, 5.0 + speedBonus + (frames / 1000.0)));
@@ -160,10 +167,10 @@ public class GameScreen extends JPanel implements Runnable {
                 toRemove.add(obs);
             }
         }
-        // Collision Detection
+        
         for (Obstacle obs : obstacles) {
             if (player.isColliding(obs)) {
-                state = 2; // Game Over
+                state = 2; 
                 audioPlayer.stopBGM();
                 break;
             }
@@ -177,14 +184,13 @@ public class GameScreen extends JPanel implements Runnable {
         Graphics2D g2d = (Graphics2D) g;
 
         if (state == 0) {
-            // Draw background elements behind the start screen (if startImg has
-            // transparency)
+
             sky.draw(g2d);
             base.draw(g2d);
             player.draw(g2d);
 
             if (startImg != null) {
-                // Draw the start image to fill the entire screen
+                
                 g2d.drawImage(startImg, 0, 0, WIDTH, HEIGHT, null);
             } else {
                 g2d.setColor(Color.BLACK);
@@ -214,8 +220,8 @@ public class GameScreen extends JPanel implements Runnable {
                 int boxWidth = 150;
                 int boxHeight = 40;
                 int boxX = (WIDTH - boxWidth) / 2;
-                int boxY = 92; // Moved down 20px
-                g2d.setColor(new Color(246, 196, 213)); // Adjusted color to blend better
+                int boxY = 92; 
+                g2d.setColor(new Color(246, 196, 213)); 
                 g2d.fillRect(boxX, boxY, boxWidth, boxHeight);
 
                 String scoreText = String.format("%05d", (frames / 10));
@@ -223,7 +229,7 @@ public class GameScreen extends JPanel implements Runnable {
                 g2d.setFont(new Font("Monospaced", Font.BOLD, 32));
                 FontMetrics metrics = g2d.getFontMetrics();
                 int textX = (WIDTH - metrics.stringWidth(scoreText)) / 2;
-                int textY = 125; // Moved down 20px
+                int textY = 125; 
                 g2d.drawString(scoreText, textX, textY);
             } else {
                 for (Obstacle obs : obstacles) {

@@ -4,20 +4,31 @@ import com.trex.core.Collidable;
 import java.awt.Image;
 import java.awt.Rectangle;
 
+/*****************************************************************************
+ *                                                                           *
+ * CLASS: Character                                                          *
+ * DESCRIPTION: Represents the player character with jumping physics and logic. *
+ *                                                                           *
+ * OOP CONCEPTS APPLIED:                                                     *
+ * - Inheritance: Extends from GameObject.                                   *
+ * - Interface: Implements Collidable for hitboxes.                          *
+ * - Overloading: Multiple constructors and jump() methods.                  *
+ * - Overriding: Overrides update() and getBounds().                         *
+ *                                                                           *
+ ****************************************************************************/
 public class Character extends GameObject implements Collidable {
     private double velocityY = 0;
     private double gravity = 0.5;
     private boolean isJumping = false;
     private final double groundY;
 
-    // INCREASED SIZE: from 64x64/50x50 to 80x80
     public Character(double x, double y, int width, int height, Image image) {
         super(x, y, width, height, image);
         this.groundY = y;
     }
 
     public Character(double x, double y, Image image) {
-        this(x, y, 90, 90, image); // Larger default size
+        this(x, y, 90, 90, image); 
     }
 
     @Override
@@ -34,7 +45,7 @@ public class Character extends GameObject implements Collidable {
 
     public void jump() {
         if (!isJumping) {
-            velocityY = -12; // Slightly higher jump to accommodate larger size
+            velocityY = -12; 
             isJumping = true;
         }
     }
@@ -48,11 +59,11 @@ public class Character extends GameObject implements Collidable {
 
     @Override
     public Rectangle getBounds() {
-        // Shurnk hitbox drastically to match ONLY the physical body of the girl, ignoring the fluffy skirts and rabbit ears
-        int xOffset = 30; // Push right
-        int yOffset = 30; // Push down
-        int reducedWidth = 60; // Cut off sides
-        int reducedHeight = 35; // Cut off bottom and top
+        
+        int xOffset = 30; 
+        int yOffset = 30; 
+        int reducedWidth = 60; 
+        int reducedHeight = 35; 
         return new Rectangle((int)x + xOffset, (int)y + yOffset, width - reducedWidth, height - reducedHeight);
     }
 }
