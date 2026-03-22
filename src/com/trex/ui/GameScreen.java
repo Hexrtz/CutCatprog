@@ -58,6 +58,7 @@ public class GameScreen extends JPanel implements Runnable {
                         initGame();
                         state = 1;
                         audioPlayer.playBGM("src/sound/sound_play.wav");
+                        audioPlayer.playSFX("src/sound/faaah.wav");
                     } else if (state == 1) {
                         player.jump(13.5); 
                         audioPlayer.playSFX("src/sound/jump.wav");
@@ -65,6 +66,7 @@ public class GameScreen extends JPanel implements Runnable {
                         initGame();
                         state = 1;
                         audioPlayer.playBGM("src/sound/sound_play.wav");
+                        audioPlayer.playSFX("src/sound/faaah.wav");
                     }
                 }
             }
