@@ -47,6 +47,13 @@ public class AudioPlayer {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             sfxClip = AudioSystem.getClip();
             sfxClip.open(audioStream);
+            
+            // Reduce volume for jump sound specifically
+            if (filePath.contains("jump.wav")) {
+                FloatControl gainControl = (FloatControl) sfxClip.getControl(FloatControl.Type.MASTER_GAIN);
+                gainControl.setValue(-15.0f); // Reduce volume by 15 decibels
+            }
+            
             sfxClip.start(); // Fire and forget
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();

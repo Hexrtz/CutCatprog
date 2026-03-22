@@ -13,6 +13,10 @@ public class Background extends GameObject {
         this.screenWidth = screenWidth; // Screen width to determine when to loop
     }
 
+    public void setScrollSpeed(double scrollSpeed) {
+        this.scrollSpeed = scrollSpeed;
+    }
+
     @Override
     public void update() {
         x -= scrollSpeed;

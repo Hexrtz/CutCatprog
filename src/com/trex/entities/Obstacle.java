@@ -12,6 +12,10 @@ public abstract class Obstacle extends GameObject implements Collidable {
         this.speed = speed;
     }
 
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
     @Override
     public Rectangle getBounds() {
         // Shurnk hitbox drastically to match ONLY the physical body of the rabbit

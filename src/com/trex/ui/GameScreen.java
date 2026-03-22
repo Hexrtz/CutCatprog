@@ -19,7 +19,7 @@ public class GameScreen extends JPanel implements Runnable {
 
     private Thread gameThread;
     private boolean isRunning = false;
-    
+
     private Character player;
     private List<Obstacle> obstacles;
     private Background sky;
@@ -29,15 +29,16 @@ public class GameScreen extends JPanel implements Runnable {
     private int state = 0; // 0 = Menu, 1 = Playing, 2 = Game Over
     private int score = 0;
     private int frames = 0;
-    
-    private Image charImg, rabImg, skyImg, baseImg;
+    private int nextSpawnFrame = 100;
+
+    private Image charImg, rabImg, skyImg, baseImg, startImg, gameoverImg;
 
     public GameScreen() {
         audioPlayer = new AudioPlayer();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setFocusable(true);
         loadImages();
-        
+
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -57,7 +58,7 @@ public class GameScreen extends JPanel implements Runnable {
                 }
             }
         });
-        
+
         initMenu();
     }
 
@@ -67,13 +68,15 @@ public class GameScreen extends JPanel implements Runnable {
         rabImg = new ImageIcon("src/img/Rab.png").getImage();
         skyImg = new ImageIcon("src/img/sky.png").getImage();
         baseImg = new ImageIcon("src/img/base.png").getImage();
+        startImg = new ImageIcon("src/img/startgame.png").getImage();
+        gameoverImg = new ImageIcon("src/img/gameover.png").getImage();
     }
-    
+
     private void initMenu() {
         sky = new Background(0, 0, WIDTH, HEIGHT, skyImg, 0, WIDTH);
         // Base image was cropped to 1536x403! Proportional height for width 900 is 236.
-        base = new Background(0, HEIGHT - 236, WIDTH, 236, baseImg, 0, WIDTH); 
-        
+        base = new Background(0, HEIGHT - 236, WIDTH, 236, baseImg, 0, WIDTH);
+
         // Character lowered by 40px to sink into the visually deep ground of baseImg
         player = new Character(60, 420 - 110, 110, 110, charImg);
         obstacles = new ArrayList<>();
@@ -81,11 +84,12 @@ public class GameScreen extends JPanel implements Runnable {
 
     private void initGame() {
         sky = new Background(0, 0, WIDTH, HEIGHT, skyImg, 1.0, WIDTH);
-        base = new Background(0, HEIGHT - 236, WIDTH, 236, baseImg, 4.0, WIDTH); 
+        base = new Background(0, HEIGHT - 236, WIDTH, 236, baseImg, 4.0, WIDTH);
         player = new Character(60, 420 - 110, 110, 110, charImg);
         obstacles = new ArrayList<>();
         frames = 0;
         score = 0;
+        nextSpawnFrame = java.util.concurrent.ThreadLocalRandom.current().nextInt(80, 150);
     }
 
     public void startGame() {
@@ -120,19 +124,37 @@ public class GameScreen extends JPanel implements Runnable {
     private void updateCore() {
         frames++;
         score = frames / 10;
-           
+
+        double speedBonus = 0;
+        if (score >= 500) {
+            speedBonus = 3.0;
+        } else if (score >= 400) {
+            speedBonus = 2.0;
+        } else if (score >= 300) {
+            speedBonus = 1.0;
+        }
+
+        sky.setScrollSpeed(1.0 + (speedBonus * 0.25));
+        base.setScrollSpeed(4.0 + speedBonus);
+
         sky.update();
         base.update();
         player.update();
-        
+
         // Spawn Enemies
-        if (frames % 100 == 0) {
+        if (frames >= nextSpawnFrame && frames > 0) {
             // Rabbit size decreased by ~20%, down to 95x95
-            obstacles.add(new Rabbit(WIDTH, 420 - 95, 95, 95, rabImg, 5.0 + (frames/1000.0)));
+            // Decrease the maximum spawn interval to make them spawn a bit more often when
+            // speed is higher
+            int minSpawn = Math.max(40, 80 - (int) (speedBonus * 10));
+            int maxSpawn = Math.max(80, 160 - (int) (speedBonus * 20));
+            obstacles.add(new Rabbit(WIDTH, 420 - 95, 95, 95, rabImg, 5.0 + speedBonus + (frames / 1000.0)));
+            nextSpawnFrame = frames + java.util.concurrent.ThreadLocalRandom.current().nextInt(minSpawn, maxSpawn);
         }
 
         List<Obstacle> toRemove = new ArrayList<>();
         for (Obstacle obs : obstacles) {
+            obs.setSpeed(5.0 + speedBonus + (frames / 1000.0));
             obs.update();
             if (obs.getX() + obs.getWidth() < 0) {
                 toRemove.add(obs);
@@ -155,14 +177,22 @@ public class GameScreen extends JPanel implements Runnable {
         Graphics2D g2d = (Graphics2D) g;
 
         if (state == 0) {
+            // Draw background elements behind the start screen (if startImg has
+            // transparency)
             sky.draw(g2d);
             base.draw(g2d);
             player.draw(g2d);
-            g2d.setColor(Color.BLACK);
-            g2d.setFont(new Font("Arial", Font.BOLD, 30));
-            FontMetrics metrics = g2d.getFontMetrics();
-            String text = "Press SPACE to Start Game";
-            g2d.drawString(text, (WIDTH - metrics.stringWidth(text)) / 2, HEIGHT / 2);
+
+            if (startImg != null) {
+                // Draw the start image to fill the entire screen
+                g2d.drawImage(startImg, 0, 0, WIDTH, HEIGHT, null);
+            } else {
+                g2d.setColor(Color.BLACK);
+                g2d.setFont(new Font("Arial", Font.BOLD, 30));
+                FontMetrics metrics = g2d.getFontMetrics();
+                String text = "Press SPACE to Start Game";
+                g2d.drawString(text, (WIDTH - metrics.stringWidth(text)) / 2, HEIGHT / 2);
+            }
         } else if (state == 1) {
             sky.draw(g2d);
             base.draw(g2d);
@@ -172,27 +202,47 @@ public class GameScreen extends JPanel implements Runnable {
             }
             g2d.setColor(Color.BLACK);
             g2d.setFont(new Font("Arial", Font.BOLD, 20));
-            g2d.drawString("Score: " + (frames/10), 20, 30);
+            g2d.drawString("Score: " + (frames / 10), 20, 30);
         } else if (state == 2) {
             sky.draw(g2d);
             base.draw(g2d);
             player.draw(g2d);
-            for (Obstacle obs : obstacles) {
-                obs.draw(g2d);
+
+            if (gameoverImg != null) {
+                g2d.drawImage(gameoverImg, 0, 0, WIDTH, HEIGHT, null);
+
+                int boxWidth = 150;
+                int boxHeight = 40;
+                int boxX = (WIDTH - boxWidth) / 2;
+                int boxY = 92; // Moved down 20px
+                g2d.setColor(new Color(246, 196, 213)); // Adjusted color to blend better
+                g2d.fillRect(boxX, boxY, boxWidth, boxHeight);
+
+                String scoreText = String.format("%05d", (frames / 10));
+                g2d.setColor(new Color(110, 31, 51));
+                g2d.setFont(new Font("Monospaced", Font.BOLD, 32));
+                FontMetrics metrics = g2d.getFontMetrics();
+                int textX = (WIDTH - metrics.stringWidth(scoreText)) / 2;
+                int textY = 125; // Moved down 20px
+                g2d.drawString(scoreText, textX, textY);
+            } else {
+                for (Obstacle obs : obstacles) {
+                    obs.draw(g2d);
+                }
+                g2d.setColor(Color.RED);
+                g2d.setFont(new Font("Arial", Font.BOLD, 40));
+                FontMetrics metrics = g2d.getFontMetrics();
+                String overText = "GAME OVER";
+                g2d.drawString(overText, (WIDTH - metrics.stringWidth(overText)) / 2, HEIGHT / 2 - 20);
+
+                g2d.setColor(Color.BLACK);
+                g2d.setFont(new Font("Arial", Font.BOLD, 20));
+                FontMetrics metrics2 = g2d.getFontMetrics();
+                String resText = "Press SPACE to Restart";
+                g2d.drawString(resText, (WIDTH - metrics2.stringWidth(resText)) / 2, HEIGHT / 2 + 20);
+                String scoreText = "Score: " + (frames / 10);
+                g2d.drawString(scoreText, (WIDTH - metrics2.stringWidth(scoreText)) / 2, HEIGHT / 2 + 50);
             }
-            g2d.setColor(Color.RED);
-            g2d.setFont(new Font("Arial", Font.BOLD, 40));
-            FontMetrics metrics = g2d.getFontMetrics();
-            String overText = "GAME OVER";
-            g2d.drawString(overText, (WIDTH - metrics.stringWidth(overText)) / 2, HEIGHT / 2 - 20);
-            
-            g2d.setColor(Color.BLACK);
-            g2d.setFont(new Font("Arial", Font.BOLD, 20));
-            FontMetrics metrics2 = g2d.getFontMetrics();
-            String resText = "Press SPACE to Restart";
-            g2d.drawString(resText, (WIDTH - metrics2.stringWidth(resText)) / 2, HEIGHT / 2 + 20);
-            String scoreText = "Score: " + (frames/10);
-            g2d.drawString(scoreText, (WIDTH - metrics2.stringWidth(scoreText)) / 2, HEIGHT / 2 + 50);
         }
     }
 }
