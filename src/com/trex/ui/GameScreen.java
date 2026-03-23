@@ -155,13 +155,21 @@ public class GameScreen extends JPanel implements Runnable {
             int minSpawn = Math.max(40, 80 - (int) (speedBonus * 10));
             int maxSpawn = Math.max(80, 160 - (int) (speedBonus * 20));
             
-            int randomObs = java.util.concurrent.ThreadLocalRandom.current().nextInt(2);
-            if (randomObs == 0) {
+            // Roll แต่ละ obstacle อิสระ (50/50 แต่ละตัว)
+            // ถ้าไม่ได้เลย ให้ random เลือก 1 ตัวเป็น fallback
+            boolean spawnTurtle = java.util.concurrent.ThreadLocalRandom.current().nextBoolean();
+            boolean spawnBird   = java.util.concurrent.ThreadLocalRandom.current().nextBoolean();
+            if (!spawnTurtle && !spawnBird) {
+                spawnTurtle = java.util.concurrent.ThreadLocalRandom.current().nextBoolean();
+                spawnBird   = !spawnTurtle;
+            }
+            if (spawnTurtle) {
                 obstacles.add(new Turtle(WIDTH, 420 - 110, 130, 130, turtleImg, 5.0 + speedBonus + (frames / 1000.0)));
-            } else {
-                // Bird spawns higher so it requires ducking or double jumping - let's set Y to 420 - 240 = 180 (top edge), height 100.
+            }
+            if (spawnBird) {
                 obstacles.add(new Bird(WIDTH, 420 - 240, 100, 100, birdImg, 6.0 + speedBonus + (frames / 1000.0)));
             }
+
             
             nextSpawnFrame = frames + java.util.concurrent.ThreadLocalRandom.current().nextInt(minSpawn, maxSpawn);
         }
