@@ -71,6 +71,7 @@ public class GameScreen extends JPanel implements Runnable {
         });
 
         initMenu();
+        audioPlayer.playBGM("src/sound/startgame_new.wav");
     }
 
     private void loadImages() {
