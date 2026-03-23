@@ -3,6 +3,7 @@ package com.trex.ui;
 import com.trex.entities.Character;
 import com.trex.entities.Obstacle;
 import com.trex.entities.Turtle;
+import com.trex.entities.Bird;
 import com.trex.core.AudioPlayer;
 import com.trex.entities.Background;
 
@@ -42,7 +43,7 @@ public class GameScreen extends JPanel implements Runnable {
     private int frames = 0;
     private int nextSpawnFrame = 100;
 
-    private Image charImg, turtleImg, skyImg, startImg, gameoverImg;
+    private Image charImg, turtleImg, skyImg, startImg, gameoverImg, birdImg;
 
     public GameScreen() {
         audioPlayer = new AudioPlayer();
@@ -78,6 +79,7 @@ public class GameScreen extends JPanel implements Runnable {
         
         charImg = new ImageIcon("src/img/human.png").getImage();
         turtleImg = new ImageIcon("src/img/total.png").getImage();
+        birdImg = new ImageIcon("src/img/bird.png").getImage();
         skyImg = new ImageIcon("src/img/backgroudV2.png").getImage();
         startImg = new ImageIcon("src/img/startGame.gif").getImage();
         gameoverImg = new ImageIcon("src/img/gameover.png").getImage();
@@ -89,14 +91,14 @@ public class GameScreen extends JPanel implements Runnable {
         
 
         player = new Character(60, 420 - 180, 180, 180, charImg);
-        obstacles = new ArrayList<>();
+        obstacles = new java.util.concurrent.CopyOnWriteArrayList<>();
     }
 
     private void initGame() {
         sky = new Background(0, 0, WIDTH, HEIGHT, skyImg, 1.0, WIDTH);
         
         player = new Character(60, 420 - 180, 180, 180, charImg);
-        obstacles = new ArrayList<>();
+        obstacles = new java.util.concurrent.CopyOnWriteArrayList<>();
         frames = 0;
         score = 0;
         nextSpawnFrame = java.util.concurrent.ThreadLocalRandom.current().nextInt(80, 150);
@@ -152,7 +154,15 @@ public class GameScreen extends JPanel implements Runnable {
 
             int minSpawn = Math.max(40, 80 - (int) (speedBonus * 10));
             int maxSpawn = Math.max(80, 160 - (int) (speedBonus * 20));
-            obstacles.add(new Turtle(WIDTH, 420 - 110, 130, 130, turtleImg, 5.0 + speedBonus + (frames / 1000.0)));
+            
+            int randomObs = java.util.concurrent.ThreadLocalRandom.current().nextInt(2);
+            if (randomObs == 0) {
+                obstacles.add(new Turtle(WIDTH, 420 - 110, 130, 130, turtleImg, 5.0 + speedBonus + (frames / 1000.0)));
+            } else {
+                // Bird spawns higher so it requires ducking or double jumping - let's set Y to 420 - 240 = 180 (top edge), height 100.
+                obstacles.add(new Bird(WIDTH, 420 - 240, 100, 100, birdImg, 6.0 + speedBonus + (frames / 1000.0)));
+            }
+            
             nextSpawnFrame = frames + java.util.concurrent.ThreadLocalRandom.current().nextInt(minSpawn, maxSpawn);
         }
 
@@ -161,6 +171,8 @@ public class GameScreen extends JPanel implements Runnable {
             obs.setSpeed(currentSpeed);
             if (obs instanceof Turtle) {
                 ((Turtle) obs).setAnimationSpeed(speedBonus);
+            } else if (obs instanceof Bird) {
+                ((Bird) obs).setAnimationSpeed(speedBonus);
             }
             obs.update();
             if (obs.getX() + obs.getWidth() < 0) {

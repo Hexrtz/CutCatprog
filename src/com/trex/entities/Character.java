@@ -23,6 +23,7 @@ public class Character extends GameObject implements Collidable {
     private boolean isJumping = false;
     private final double groundY;
     private int frame = 0;
+    private int jumpCount = 0;
     private int animationTick = 0;
     private int animationThreshold = 12;
 
@@ -47,12 +48,14 @@ public class Character extends GameObject implements Collidable {
         if (y >= groundY) {
             y = groundY;
             isJumping = false;
+            jumpCount = 0;
             velocityY = 0;
         }
 
         animationTick++;
         if (animationTick >= animationThreshold) {
-            frame = (frame == 0) ? 1 : 0;
+            // frame = (frame == 0) ? 1 : 0; // Fix to use single frame as per user requirements
+            frame = 0;
             animationTick = 0;
         }
     }
@@ -79,16 +82,18 @@ public class Character extends GameObject implements Collidable {
     }
 
     public void jump() {
-        if (!isJumping) {
+        if (!isJumping || jumpCount < 2) {
             velocityY = -12; 
             isJumping = true;
+            jumpCount++;
         }
     }
 
     public void jump(double customForce) {
-        if (!isJumping) {
+        if (!isJumping || jumpCount < 2) {
             velocityY = -customForce;
             isJumping = true;
+            jumpCount++;
         }
     }
 
