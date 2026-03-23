@@ -58,15 +58,13 @@ public class GameScreen extends JPanel implements Runnable {
                         initGame();
                         state = 1;
                         audioPlayer.playBGM("src/sound/sound_play.wav");
-                        audioPlayer.playSFX("src/sound/faaah.wav");
                     } else if (state == 1) {
                         player.jump(13.5); 
-                        audioPlayer.playSFX("src/sound/jump.wav");
+                        audioPlayer.playSFX("src/sound/jump_new.wav");
                     } else if (state == 2) {
                         initGame();
                         state = 1;
                         audioPlayer.playBGM("src/sound/sound_play.wav");
-                        audioPlayer.playSFX("src/sound/faaah.wav");
                     }
                 }
             }
@@ -80,7 +78,7 @@ public class GameScreen extends JPanel implements Runnable {
         charImg = new ImageIcon("src/img/human.png").getImage();
         turtleImg = new ImageIcon("src/img/total.png").getImage();
         skyImg = new ImageIcon("src/img/backgroudV2.png").getImage();
-        startImg = new ImageIcon("src/img/StartGame.png").getImage();
+        startImg = new ImageIcon("src/img/startGame.gif").getImage();
         gameoverImg = new ImageIcon("src/img/gameover.png").getImage();
     }
 
@@ -216,19 +214,33 @@ public class GameScreen extends JPanel implements Runnable {
             if (gameoverImg != null) {
                 g2d.drawImage(gameoverImg, 0, 0, WIDTH, HEIGHT, null);
 
-                int boxWidth = 150;
-                int boxHeight = 40;
-                int boxX = (WIDTH - boxWidth) / 2;
-                int boxY = 92; 
-                g2d.setColor(new Color(246, 196, 213)); 
-                g2d.fillRect(boxX, boxY, boxWidth, boxHeight);
-
-                String scoreText = String.format("%05d", (frames / 10));
-                g2d.setColor(new Color(110, 31, 51));
-                g2d.setFont(new Font("Monospaced", Font.BOLD, 32));
+                String scoreText = "SCORE: " + String.format("%05d", (frames / 10));
+                g2d.setFont(new Font("Arial", Font.BOLD, 28));
                 FontMetrics metrics = g2d.getFontMetrics();
-                int textX = (WIDTH - metrics.stringWidth(scoreText)) / 2;
-                int textY = 125; 
+                int textWidth = metrics.stringWidth(scoreText);
+                
+                int boxWidth = textWidth + 40;
+                int boxHeight = 50;
+                int boxX = (WIDTH - boxWidth) / 2;
+                int boxY = 360; 
+                
+                // Draw a sleek semi-transparent dark rounded box
+                g2d.setColor(new Color(0, 0, 0, 150)); 
+                g2d.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+                
+                // Draw a soft gold border
+                g2d.setColor(new Color(255, 215, 0, 180));
+                g2d.setStroke(new BasicStroke(2));
+                g2d.drawRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+
+                // Draw Text with a slight drop shadow effect
+                int textX = boxX + 20;
+                int textY = boxY + 36; 
+                
+                g2d.setColor(Color.BLACK);
+                g2d.drawString(scoreText, textX + 2, textY + 2); // shadow
+                
+                g2d.setColor(new Color(255, 215, 0)); // Gold color
                 g2d.drawString(scoreText, textX, textY);
             } else {
                 for (Obstacle obs : obstacles) {

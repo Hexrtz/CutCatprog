@@ -37,7 +37,7 @@ public class AudioPlayer {
             // ลดเสียง BGM ลงอีกเยอะๆ ให้เบาลงจากเดิมมาก (ประมาณ -15.0 เดซิเบล)
             if (bgmClip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
                 FloatControl gainControl = (FloatControl) bgmClip.getControl(FloatControl.Type.MASTER_GAIN);
-                gainControl.setValue(-50.0f); 
+                gainControl.setValue(-15.0f); 
             }
             
             bgmClip.loop(Clip.LOOP_CONTINUOUSLY); 
