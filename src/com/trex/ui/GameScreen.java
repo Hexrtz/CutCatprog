@@ -204,9 +204,34 @@ public class GameScreen extends JPanel implements Runnable {
             for (Obstacle obs : obstacles) {
                 obs.draw(g2d);
             }
+            String scoreText = "SCORE: " + String.format("%05d", (frames / 10));
+            g2d.setFont(new Font("Arial", Font.BOLD, 22));
+            FontMetrics metrics = g2d.getFontMetrics();
+            int textWidth = metrics.stringWidth(scoreText);
+            
+            int boxWidth = textWidth + 30;
+            int boxHeight = 40;
+            int boxX = 20;
+            int boxY = 20; 
+            
+            // Draw a sleek semi-transparent dark rounded box
+            g2d.setColor(new Color(0, 0, 0, 150)); 
+            g2d.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 15, 15);
+            
+            // Draw a soft white border
+            g2d.setColor(new Color(255, 255, 255, 150));
+            g2d.setStroke(new BasicStroke(2));
+            g2d.drawRoundRect(boxX, boxY, boxWidth, boxHeight, 15, 15);
+
+            // Draw Text with a slight drop shadow effect
+            int textX = boxX + 15;
+            int textY = boxY + 28; 
+            
             g2d.setColor(Color.BLACK);
-            g2d.setFont(new Font("Arial", Font.BOLD, 20));
-            g2d.drawString("Score: " + (frames / 10), 20, 30);
+            g2d.drawString(scoreText, textX + 2, textY + 2); // shadow
+            
+            g2d.setColor(Color.WHITE); // White text
+            g2d.drawString(scoreText, textX, textY);
         } else if (state == 2) {
             sky.draw(g2d);
                         player.draw(g2d);
